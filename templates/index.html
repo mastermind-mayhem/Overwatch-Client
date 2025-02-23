@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overwatch - FRC Scouting</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-logo">Overdrive Overwatch</div>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/rankings">Rankings</a>
+                <a href="/analysis">Analysis</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Match Setup</h1>
+            </div>
+            <div class="card-content">
+                <form id="matchForm">
+                    <div class="match-info">
+                        <div class="form-group">
+                            <label for="matchNumber">Match Number</label>
+                            <input type="number" id="matchNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="matchType">Match Type</label>
+                            <select id="matchType" required>
+                                <option value="qualification">Qualification</option>
+                                <option value="playoff">Playoff</option>
+                                <option value="practice">Practice</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="teams-section">
+                        <h3>Red Alliance</h3>
+                        <div class="alliance-teams red">
+                            <div class="team-input">
+                                <label for="red1">Team 1</label>
+                                <input type="number" id="red1" required>
+                            </div>
+                            <div class="team-input">
+                                <label for="red2">Team 2</label>
+                                <input type="number" id="red2" required>
+                            </div>
+                            <div class="team-input">
+                                <label for="red3">Team 3</label>
+                                <input type="number" id="red3" required>
+                            </div>
+                        </div>
+
+                        <h3>Blue Alliance</h3>
+                        <div class="alliance-teams blue">
+                            <div class="team-input">
+                                <label for="blue1">Team 1</label>
+                                <input type="number" id="blue1" required>
+                            </div>
+                            <div class="team-input">
+                                <label for="blue2">Team 2</label>
+                                <input type="number" id="blue2" required>
+                            </div>
+                            <div class="team-input">
+                                <label for="blue3">Team 3</label>
+                                <input type="number" id="blue3" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn primary">Continue to Rankings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

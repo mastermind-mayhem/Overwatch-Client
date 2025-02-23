@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overwatch - Team Rankings</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-logo">Overwatch</div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/rankings" class="active">Rankings</a>
+                <a href="/analysis">Analysis</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Match Rankings</h1>
+                <div class="match-info-display">
+                    <span id="matchDisplay">Match #: </span>
+                    <span id="typeDisplay">Type: </span>
+                </div>
+            </div>
+            <div class="card-content">
+                <form id="rankingForm">
+                    <div class="ranking-categories">
+                        <div class="category">
+                            <h3>Autonomous Performance</h3>
+                            <div class="ranking-grid" id="autoRankings"></div>
+                        </div>
+
+                        <div class="category">
+                            <h3>Teleop Effectiveness</h3>
+                            <div class="ranking-grid" id="teleopRankings"></div>
+                        </div>
+
+                        <div class="category">
+                            <h3>Defense Rating</h3>
+                            <div class="ranking-grid" id="defenseRankings"></div>
+                        </div>
+                    </div>
+
+                    <div class="notes-section">
+                        <div class="form-group">
+                            <label for="notes">Match Notes</label>
+                            <textarea id="notes" rows="3" placeholder="Add any additional observations..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn secondary" onclick="history.back()">Back</button>
+                        <button type="submit" class="btn primary">Submit Rankings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/rankings.js"></script>
+</body>
+</html>
