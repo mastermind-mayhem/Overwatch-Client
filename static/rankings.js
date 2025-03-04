@@ -2,7 +2,7 @@
 class OverwatchRankings {
     constructor() {
         this.form = document.getElementById('rankingForm');
-        this.categories = ['autoRankings', 'coralRankings', 'algaeRankings', 'driverRankings', 'endRankings'];
+        this.categories = ['autoRankings', 'teleopRankings', 'defenseRankings'];
         this.matchData = JSON.parse(sessionStorage.getItem('matchData') || '{}');
         this.rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
         
@@ -27,7 +27,6 @@ class OverwatchRankings {
             window.location.href = '/';
             return;
         }
-        console.log(this.matchData)
 
         this.categories.forEach(categoryId => {
             const container = document.getElementById(categoryId);
@@ -41,15 +40,13 @@ class OverwatchRankings {
                 const teamDisplay = document.createElement('div');
                 teamDisplay.className = 'team-number';
                 teamDisplay.textContent = `Team ${teamNumber}`;
-                var style = window.getComputedStyle(document.body)
-                teamDisplay.style.backgroundColor = index < 3 ? style.getPropertyValue('--blue-alliance') : style.getPropertyValue('--red-alliance');
                 
                 const rankSelect = document.createElement('select');
                 rankSelect.className = 'rank-select';
                 rankSelect.dataset.team = teamNumber;
                 rankSelect.innerHTML = `
                     <option value="">Rank</option>
-                    ${[1, 2, 3].map(n => 
+                    ${[1, 2, 3, 4, 5, 6].map(n => 
                         `<option value="${n}">${n}</option>`
                     ).join('')}
                 `;
@@ -65,27 +62,15 @@ class OverwatchRankings {
 
     validateRankSelection(categoryId) {
         const selects = document.querySelectorAll(`#${categoryId} select`);
-        const blueSelectedRanks = new Set();
-        const redSelectedRanks = new Set();
+        const selectedRanks = new Set();
         
-        selects.forEach((select, index) => {
-            if (index < 3) {
-                if (select.value) {
-                    if (redSelectedRanks.has(select.value)) {
-                        select.value = '';
-                        alert('Each rank can only be used once per category');
-                    } else {
-                        redSelectedRanks.add(select.value);
-                    }
-                }
-            } else {
-                if (select.value) {
-                    if (blueSelectedRanks.has(select.value)) {
-                        select.value = '';
-                        alert('Each rank can only be used once per category');
-                    } else {
-                        blueSelectedRanks.add(select.value);
-                    }
+        selects.forEach(select => {
+            if (select.value) {
+                if (selectedRanks.has(select.value)) {
+                    select.value = '';
+                    alert('Each rank can only be used once per category');
+                } else {
+                    selectedRanks.add(select.value);
                 }
             }
         });
@@ -111,29 +96,13 @@ class OverwatchRankings {
     validateAllRankings() {
         for (const categoryId of this.categories) {
             const selects = document.querySelectorAll(`#${categoryId} select`);
-            const blueSelectedRanks = new Set();
-            const redSelectedRanks = new Set();
+            const selectedRanks = new Set();
             
-            selects.forEach((select, index) => {
+            for (const select of selects) {
                 if (!select.value) return false;
-                if (index < 3) {
-                    if (select.value) {
-                        if (redSelectedRanks.has(select.value)) {
-                            return false;
-                        } else {
-                            redSelectedRanks.add(select.value);
-                        }
-                    }
-                } else {
-                    if (select.value) {
-                        if (blueSelectedRanks.has(select.value)) {
-                            return false;
-                        } else {
-                            blueSelectedRanks.add(select.value);
-                        }
-                    }
-                }
-            });
+                if (selectedRanks.has(select.value)) return false;
+                selectedRanks.add(select.value);
+            }
         }
         return true;
     }
@@ -154,24 +123,48 @@ class OverwatchRankings {
             notes: document.getElementById('notes').value
         };
 
-        if (!localStorage.getItem("scoutingData")) {
-            
-        }
+        // Save to local storage
+        this.rankings.push(matchRankings);
+        localStorage.setItem('rankings', JSON.stringify(this.rankings));
 
-        localStorage.setItem('rankings', JSON.stringify(matchRankings));
+        // Clear session storage
+        sessionStorage.removeItem('matchData');
 
-        const savedData = JSON.parse(localStorage.getItem("scoutingData"));
-        console.log(savedData);
-
-        // // Clear session storage
-        // sessionStorage.removeItem('matchData');
-
-        // // Return to home page
-        // alert('Rankings saved successfully!');
-        // window.location.href = '/';
+        // Return to home page
+        alert('Rankings saved successfully!');
+        window.location.href = '/';
     }
 
-    
+    exportRankings() {
+        const csv = this.convertRankingsToCSV();
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'overwatch_rankings.csv';
+        a.click();
+    }
+
+    convertRankingsToCSV() {
+        const headers = ['Match', 'Type', 'Team', 'Auto', 'Teleop', 'Defense', 'Notes', 'Timestamp'];
+        const rows = this.rankings.flatMap(match => 
+            Object.entries(match.rankings).map(([team, ranks]) => [
+                match.matchNumber,
+                match.matchType,
+                team,
+                ranks.auto,
+                ranks.teleop,
+                ranks.defense,
+                match.notes.replace(/,/g, ';'),
+                match.timestamp
+            ])
+        );
+        
+        return [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+    }
 }
 
 // Initialize rankings page
