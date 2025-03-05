@@ -11,6 +11,7 @@
         <div class="nav-content">
             <div class="nav-logo">Overdrive Overwatch</div>
             <div class="nav-links">
+                <a href="/">Home</a>
             </div>
         </div>
     </nav>
@@ -24,55 +25,14 @@
                 <form id="matchForm">
                     <div class="match-info">
                         <div class="form-group">
-                            <label for="matchNumber">Match Number</label>
-                            <input type="number" id="matchNumber" required>
+                            <label for="eventlist">Event</label>
+                            <select id="eventlist" required></select>
                         </div>
-                        <div class="form-group">
-                            <label for="matchType">Match Type</label>
-                            <select id="matchType" required>
-                                <option value="qualification">Qualification</option>
-                                <option value="playoff">Playoff</option>
-                                <option value="practice">Practice</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="teams-section">
-                        <h3>Red Alliance</h3>
-                        <div class="alliance-teams red">
-                            <div class="team-input">
-                                <label for="red1">Team 1</label>
-                                <input type="number" id="red1" required>
-                            </div>
-                            <div class="team-input">
-                                <label for="red2">Team 2</label>
-                                <input type="number" id="red2" required>
-                            </div>
-                            <div class="team-input">
-                                <label for="red3">Team 3</label>
-                                <input type="number" id="red3" required>
-                            </div>
-                        </div>
-
-                        <h3>Blue Alliance</h3>
-                        <div class="alliance-teams blue">
-                            <div class="team-input">
-                                <label for="blue1">Team 1</label>
-                                <input type="number" id="blue1" required>
-                            </div>
-                            <div class="team-input">
-                                <label for="blue2">Team 2</label>
-                                <input type="number" id="blue2" required>
-                            </div>
-                            <div class="team-input">
-                                <label for="blue3">Team 3</label>
-                                <input type="number" id="blue3" required>
-                            </div>
-                        </div>
+                        <div class="form-group" id="eventSigDiv" style="display: none;"></div>
                     </div>
 
                     <div class="button-group">
-                        <button type="submit" class="btn primary">Continue to Rankings</button>
+                        <button type="submit" class="btn primary">Continue to Match Setup</button>
                     </div>
                 </form>
             </div>

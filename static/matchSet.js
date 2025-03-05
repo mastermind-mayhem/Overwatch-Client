@@ -3,6 +3,7 @@ class OverwatchApp {
     constructor() {
         this.form = document.getElementById('matchForm');
         this.initializeEventListeners();
+        this.changeHeader();
     }
 
     initializeEventListeners() {
@@ -32,6 +33,11 @@ class OverwatchApp {
 
         sessionStorage.setItem('matchData', JSON.stringify(matchData));
         window.location.href = '/rankings';
+    }
+
+    changeHeader() {
+        let event =JSON.parse(sessionStorage.getItem('eventData') || '{}');
+        document.getElementById('header').textContent = document.getElementById('header').textContent +" - "+ event.event.name
     }
 }
 

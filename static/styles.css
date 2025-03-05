@@ -8,6 +8,8 @@
     --background: #f5f8fa;
     --card-background: #ffffff;
     --border-color: #e1e8ed;
+    --blue-alliance: rgba(0, 170, 255, 0.2);
+    --red-alliance: rgba(254, 0, 21, 0.2);
 }
 
 * {
@@ -111,11 +113,11 @@ body {
 }
 
 .alliance-teams.red {
-    background-color: rgba(230, 57, 70, 0.1);
+    background-color: var(--red-alliance);
 }
 
 .alliance-teams.blue {
-    background-color: rgba(69, 123, 157, 0.1);
+    background-color: var(--blue-alliance);
 }
 
 .team-input {

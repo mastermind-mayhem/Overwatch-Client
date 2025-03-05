@@ -3,6 +3,7 @@ class OverwatchApp {
     constructor() {
         this.form = document.getElementById('matchForm');
         this.initializeEventListeners();
+        this.events = {};
     }
 
     initializeEventListeners() {
@@ -11,33 +12,25 @@ class OverwatchApp {
 
     handleSubmit(e) {
         e.preventDefault();
-        
-        // Store match data in sessionStorage
-        const matchData = {
-            matchNumber: document.getElementById('matchNumber').value,
-            matchType: document.getElementById('matchType').value,
-            teams: {
-                red: [
-                    document.getElementById('red1').value,
-                    document.getElementById('red2').value,
-                    document.getElementById('red3').value
-                ],
-                blue: [
-                    document.getElementById('blue1').value,
-                    document.getElementById('blue2').value,
-                    document.getElementById('blue3').value
-                ]
-            }
-        };
+        let selectedvalue = document.getElementById("eventlist").value
+        var json;
+        if (selectedvalue == "other") {
+            eventSig = document.getElementById("eventSig").value;
+            json = displayEventData(eventSig);
+        } else {
+            json = events[selectedvalue];
+        }
+        console.log(json);
 
-        sessionStorage.setItem('matchData', JSON.stringify(matchData));
-        window.location.href = '/rankings';
+        sessionStorage.setItem('eventData', JSON.stringify(json));
+        window.location.href = '/matchSet';
     }
 }
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     window.overwatchApp = new OverwatchApp();
+    LoadEvents();
 });
 
 async function getTBAEventData(eventKey) {
@@ -75,13 +68,52 @@ async function getTBAEventData(eventKey) {
     const data = await getTBAEventData(eventKey);
   
     if (data) {
-      console.log(data);
+      return data;
   
     } else {
       console.log('Failed to retrieve event data.');
     }
   }
-  
-  // Replace '2023nytr' with the desired event key (e.g., 2023nytr, 2024calb)
-//   const eventKey = '2025nhsal'; // Example event key
-//   displayEventData(eventKey);
+
+  async function LoadEvents() {
+    let maxFiles = 4;
+    let basePath = "/preload/";
+    container = document.getElementById('eventlist');
+    container.innerHTML = '';
+    events = {};
+
+
+    for (let i = 1; i <= maxFiles; i++) {
+        let filePath = `${basePath}2025event${i}.json`; // Adjust naming pattern
+        try {
+            let response = await fetch(filePath);
+            if (response.ok) {
+                let data = await response.json();
+                events[filePath] = data;
+            }
+        } catch (error) {
+            break;
+            
+        }
+    }
+    container.innerHTML += `<option value=""></option>`;
+    console.log(events);
+    for (let event in events) {
+      container.innerHTML += `<option value="${event}">${events[event]["event"]["short_name"]}</option>`;
+    }
+    container.innerHTML += `<option value="other">Other</option>`;
+    container.addEventListener('change', () => checkOther());
+}
+
+function checkOther() {
+    let value = document.getElementById('eventlist').value;
+    if (value == "other") {
+        document.getElementById('eventSigDiv').style.display = 'block';
+        document.getElementById('eventSigDiv').innerHTML = `<label for="eventSig">Event Signifier (ex.2025nhsal for 2025 Granite State Event)</label>
+                            <input type="text" id="eventSig" required>`;
+    } else {
+        document.getElementById('eventSigDiv').style.display = 'none';
+        document.getElementById('eventSigDiv').innerHTML = ``;
+    }
+}
+
