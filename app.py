@@ -12,8 +12,16 @@ def rankings():
     return render_template('rankings.html')
 
 @app.route('/matchSet')
-def analysis():
+def setup():
     return render_template('matchSet.html')
+
+@app.route('/teamUpload')
+def teamUpload():
+    return render_template('teamUpload.html')
+
+@app.route('/analysis')
+def analysis():
+    return render_template('analysis.html')
 
 @app.route('/static/<path:path>')
 def send_static(path):

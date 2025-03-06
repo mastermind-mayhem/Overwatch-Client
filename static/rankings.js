@@ -167,7 +167,7 @@ class OverwatchRankings {
         // Create a temporary link element
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = this.eventData.event.first_event_code+_match+this.matchData.matchNumber+".json";  // Filename
+        a.download = this.eventData.event.first_event_code+"_match"+this.matchData.matchNumber+".json";  // Filename
 
         // Append to the DOM, trigger download, and remove the element
         document.body.appendChild(a);

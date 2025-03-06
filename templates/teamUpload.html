@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overwatch - FRC Scouting</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-logo">Overdrive Overwatch</div>
+            <div class="nav-links">
+                <a href="/">Scouting</a>
+                <a href="/teamUpload" class="active">Analysis</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Upload Match Files</h1>
+            </div>
+            <div class="card-content">
+                <div class="file-upload">
+                    <div class="file-actions">
+                        <input type="file" id="jsonFileInput" accept=".json" multiple>
+                        <button id="clearFilesButton">Clear All Files</button>
+                    </div>
+                    
+                    <table id="fileTable" class="file-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th data-sort="name">File Name ▼</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileTableBody"></tbody>
+                    </table>
+                    
+                    <div class="processing-option">    
+                        <button id="processButton" disabled>Process Selected Files</button>
+                    </div>
+                    
+                    <div id="error-message"></div>
+                </div>
+                
+                <div id="processedDataContainer" class="processed-data" style="display:none;">
+                    <h3>Processed Data:</h3>
+                    <pre id="processedData"></pre>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="/static/teamUpload.js"></script>
+</body>
+</html>

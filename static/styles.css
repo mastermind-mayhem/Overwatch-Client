@@ -231,3 +231,28 @@ textarea:focus {
         width: 100%;
     }
 }
+
+select {
+    padding: 8px;
+    margin-bottom: 10px;
+}
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    color: #000;
+}
+th {
+    background: var(--royal-blue-dark);;
+    color: white;
+    cursor: pointer;
+}
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
