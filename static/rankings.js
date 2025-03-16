@@ -69,6 +69,9 @@ class OverwatchRankings {
                         radio.dataset.rank = rank;
                         radio.dataset.category = categoryId;
                         radio.dataset.alliance = alliance;
+                        cell.addEventListener('click', () => {
+                            radio.checked = true;
+                        });
                         cell.appendChild(radio);
                     });
                 });
