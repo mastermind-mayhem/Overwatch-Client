@@ -6,7 +6,7 @@ class OverwatchRankings {
         this.matchData = JSON.parse(sessionStorage.getItem('matchData') || '{}');
         this.eventData = JSON.parse(sessionStorage.getItem('eventData') || '{}');
         this.rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
-        
+
         this.initializeEventListeners();
         this.displayMatchInfo();
         this.setupRankingGrids();
@@ -17,9 +17,9 @@ class OverwatchRankings {
     }
 
     displayMatchInfo() {
-        document.getElementById('matchDisplay').textContent = 
+        document.getElementById('matchDisplay').textContent =
             `Match #: ${this.matchData.matchNumber || '?'}`;
-        document.getElementById('typeDisplay').textContent = 
+        document.getElementById('typeDisplay').textContent =
             `Type: ${this.matchData.matchType || '?'}`;
     }
 
@@ -32,118 +32,90 @@ class OverwatchRankings {
         this.categories.forEach(categoryId => {
             const container = document.getElementById(categoryId);
             container.innerHTML = '';
-            
-            // Create ranking items for all teams
-            [...this.matchData.teams.red, ...this.matchData.teams.blue].forEach((teamNumber, index) => {
-                const rankingItem = document.createElement('div');
-                rankingItem.className = `ranking-item ${index < 3 ? 'red-team' : 'blue-team'}`;
-                
-                const teamDisplay = document.createElement('div');
-                teamDisplay.className = 'team-number';
-                teamDisplay.textContent = `Team ${teamNumber}`;
-                var style = window.getComputedStyle(document.body)
-                teamDisplay.style.backgroundColor = index < 3 ? style.getPropertyValue('--blue-alliance') : style.getPropertyValue('--red-alliance');
-                
-                const rankSelect = document.createElement('select');
-                rankSelect.className = 'rank-select';
-                rankSelect.dataset.team = teamNumber;
-                rankSelect.innerHTML = `
-                    <option value="">Rank</option>
-                    ${[1, 2, 3].map(n => 
-                        `<option value="${n}">${n}</option>`
-                    ).join('')}
-                `;
-                
-                rankSelect.addEventListener('change', () => this.validateRankSelection(categoryId));
-                
-                rankingItem.appendChild(teamDisplay);
-                rankingItem.appendChild(rankSelect);
-                container.appendChild(rankingItem);
-            });
-        });
-    }
 
-    validateRankSelection(categoryId) {
-        const selects = document.querySelectorAll(`#${categoryId} select`);
-        const blueSelectedRanks = new Set();
-        const redSelectedRanks = new Set();
-        
-        selects.forEach((select, index) => {
-            if (index < 3) {
-                if (select.value) {
-                    if (redSelectedRanks.has(select.value)) {
-                        select.value = '';
-                        alert('Each rank can only be used once per category');
-                    } else {
-                        redSelectedRanks.add(select.value);
-                    }
+            // do this twice. once for red and once for blue
+            for (let i = 0; i < 2; i++) {
+                const table = document.createElement('table');
+                const headerRow = table.insertRow();
+                headerRow.insertCell().textContent = ""; //Empty cell for rank
+
+                // Add team headers
+                let teams = this.matchData.teams.red;
+                let alliance = "red";
+                if (i == 1) {
+                    teams = this.matchData.teams.blue;
+                    alliance = "blue";
                 }
-            } else {
-                if (select.value) {
-                    if (blueSelectedRanks.has(select.value)) {
-                        select.value = '';
-                        alert('Each rank can only be used once per category');
-                    } else {
-                        blueSelectedRanks.add(select.value);
-                    }
-                }
+                [...teams].forEach((teamNumber, index) => {
+                    const headerCell = headerRow.insertCell();
+                    headerCell.textContent = `Team ${teamNumber}`;
+                    var style = window.getComputedStyle(document.body)
+                    headerCell.style.backgroundColor = style.getPropertyValue(`--${alliance}-alliance`);
+                });
+
+                // Add rank rows with radio buttons
+                [1, 2, 3].forEach(rank => {
+                    const row = table.insertRow();
+                    const rankCell = row.insertCell();
+                    rankCell.textContent = `${rank}st`;
+
+
+                    [...teams].forEach((teamNumber, index) => {
+                        const cell = row.insertCell();
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `${categoryId}-${alliance}-${rank}`;
+                        radio.value = teamNumber;
+                        radio.dataset.rank = rank;
+                        radio.dataset.category = categoryId;
+                        radio.dataset.alliance = alliance;
+                        cell.appendChild(radio);
+                    });
+                });
+                container.appendChild(table);
             }
         });
     }
 
     collectRankings() {
         const rankings = {};
-        
         this.categories.forEach(categoryId => {
-            const selects = document.querySelectorAll(`#${categoryId} select`);
-            selects.forEach(select => {
-                const teamNumber = select.dataset.team;
-                if (!rankings[teamNumber]) {
-                    rankings[teamNumber] = {};
+            const radios = document.querySelectorAll(`input[data-category="${categoryId}"]`);
+            radios.forEach(radio => {
+                if (radio.checked) {
+                    const teamNumber = radio.value;
+                    const rank = parseInt(radio.dataset.rank);
+                    if (!rankings[teamNumber]) {
+                        rankings[teamNumber] = {};
+                    }
+                    rankings[teamNumber][categoryId.replace('Rankings', '')] = rank;
                 }
-                rankings[teamNumber][categoryId.replace('Rankings', '')] = parseInt(select.value) || 0;
             });
         });
-        
         return rankings;
     }
 
     validateAllRankings() {
         for (const categoryId of this.categories) {
-            const selects = document.querySelectorAll(`#${categoryId} select`);
-            const blueSelectedRanks = new Set();
-            const redSelectedRanks = new Set();
-            
-            selects.forEach((select, index) => {
-                if (!select.value) return false;
-                if (index < 3) {
-                    if (select.value) {
-                        if (redSelectedRanks.has(select.value)) {
-                            return false;
-                        } else {
-                            redSelectedRanks.add(select.value);
-                        }
-                    }
-                } else {
-                    if (select.value) {
-                        if (blueSelectedRanks.has(select.value)) {
-                            return false;
-                        } else {
-                            blueSelectedRanks.add(select.value);
-                        }
-                    }
+            const radios = document.querySelectorAll(`input[data-category="${categoryId}"]`);
+            const selectedRanks = new Set();
+            let count = 0; //check if 3 ranks are selected
+            radios.forEach(radio => {
+                if (radio.checked) {
+                    count++;
+                    selectedRanks.add(radio.dataset.rank);
                 }
             });
-            
+            if(count != 6) return false;
         }
         return true;
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        
+
         if (!this.validateAllRankings()) {
-            alert('Please ensure all teams are ranked uniquely (1-6) in each category');
+            alert('Please ensure all teams are ranked uniquely (1-3) in each category');
             return;
         }
 
@@ -167,7 +139,7 @@ class OverwatchRankings {
         // Create a temporary link element
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = this.eventData.event.first_event_code+"_match"+this.matchData.matchNumber+".json";  // Filename
+        a.download = this.eventData.event.first_event_code + "_match" + this.matchData.matchNumber + ".json";  // Filename
 
         // Append to the DOM, trigger download, and remove the element
         document.body.appendChild(a);
