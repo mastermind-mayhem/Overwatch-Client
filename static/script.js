@@ -20,7 +20,6 @@ class OverwatchApp {
         } else {
             json = events[selectedvalue];
         }
-        console.log(json);
 
         sessionStorage.setItem('eventData', JSON.stringify(json));
         window.location.href = '/matchSet';
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function getTBAEventData(eventKey) {
     const apiKey = 'ORsATVgqwTfsLS8XqcHRXNVIHmtY6hNdzgN7pOieyzONulNij6AXyfiA5RlTpirD'; // Replace with your actual API key
     const baseUrl = 'https://www.thebluealliance.com/api/v3';
-  
+
     try {
       // Fetch event details
       const eventResponse = await fetch(`${baseUrl}/event/${eventKey}`, {
@@ -46,7 +45,7 @@ async function getTBAEventData(eventKey) {
         throw new Error(`Failed to fetch event details: ${eventResponse.status} ${eventResponse.statusText}`);
       }
       const eventData = await eventResponse.json();
-  
+
       // Fetch teams in the event
       const teamsResponse = await fetch(`${baseUrl}/event/${eventKey}/teams/simple`, {
         headers: { 'X-TBA-Auth-Key': apiKey },
@@ -55,21 +54,21 @@ async function getTBAEventData(eventKey) {
         throw new Error(`Failed to fetch teams: ${teamsResponse.status} ${teamsResponse.statusText}`);
       }
       const teamsData = await teamsResponse.json();
-  
+
       return { event: eventData, teams: teamsData };
     } catch (error) {
       console.error('Error fetching data from The Blue Alliance:', error);
       return null;
     }
   }
-  
+
   // Example usage:
   async function displayEventData(eventKey) {
     const data = await getTBAEventData(eventKey);
-  
+
     if (data) {
       return data;
-  
+
     } else {
       console.log('Failed to retrieve event data.');
     }
@@ -93,11 +92,10 @@ async function getTBAEventData(eventKey) {
             }
         } catch (error) {
             break;
-            
+
         }
     }
     container.innerHTML += `<option value=""></option>`;
-    console.log(events);
     for (let event in events) {
       container.innerHTML += `<option value="${event}">${events[event]["event"]["short_name"]}</option>`;
     }

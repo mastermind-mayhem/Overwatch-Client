@@ -34,7 +34,6 @@ let averageRankings = Object.entries(teamData).map(([team, data]) => {
 function interpolateColor(value) {
     let red = [175, 0, 0];
     let green = [0, 175, 0];
-    console.log(value);
     if (value <= 2) {
         let opacity = (2-value);
         if (opacity < 0.3) {

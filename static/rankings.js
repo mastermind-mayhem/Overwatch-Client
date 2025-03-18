@@ -5,10 +5,15 @@ class OverwatchRankings {
         this.categories = ['autoRankings', 'coralRankings', 'algaeRankings', 'driverRankings', 'endRankings'];
         this.matchData = JSON.parse(sessionStorage.getItem('matchData') || '{}');
         this.eventData = JSON.parse(sessionStorage.getItem('eventData') || '{}');
-        this.rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+
+        if (!this.matchData.teams) {
+            window.location.href = '/';
+            return;
+        }
 
         this.initializeEventListeners();
         this.displayMatchInfo();
+        this.setupTeamNotesField();
         this.setupRankingGrids();
     }
 
@@ -23,12 +28,39 @@ class OverwatchRankings {
             `Type: ${this.matchData.matchType || '?'}`;
     }
 
-    setupRankingGrids() {
-        if (!this.matchData.teams) {
-            window.location.href = '/';
-            return;
-        }
+    setupTeamNotesField() {
+        const table = document.createElement('table');
+        const headerRow = table.insertRow();
+        headerRow.insertCell().textContent = "Team";
+        headerRow.insertCell().textContent = "Alliance";
+        headerRow.insertCell().textContent = "Notes";
 
+        const container = document.getElementById(`team-notes`);
+        container.innerHTML = '';
+        [...this.matchData.teams.red, ...this.matchData.teams.blue].forEach((teamNumber, index) => {
+            let alliance = "red";
+            if (index > 2) {
+                alliance = "blue";
+            }
+
+            const row = table.insertRow();
+            row.insertCell().textContent = teamNumber;
+            row.insertCell().textContent = alliance;
+
+            const notesCell = row.insertCell();
+            const notesInput = document.createElement('input');
+            notesInput.type = 'text';
+            notesInput.dataset.notes = teamNumber;
+            notesInput.placeholder = 'Enter notes here';
+            notesInput.value = '';
+            notesCell.appendChild(notesInput);
+            var style = window.getComputedStyle(document.body)
+            notesCell.style.backgroundColor = style.getPropertyValue(`--${alliance}-alliance`);
+        });
+        container.appendChild(table);
+    }
+
+    setupRankingGrids() {
         this.categories.forEach(categoryId => {
             const container = document.getElementById(categoryId);
             container.innerHTML = '';
@@ -37,7 +69,7 @@ class OverwatchRankings {
             for (let i = 0; i < 2; i++) {
                 const table = document.createElement('table');
                 const headerRow = table.insertRow();
-                headerRow.insertCell().textContent = ""; //Empty cell for rank
+                headerRow.insertCell().textContent = "";
 
                 // Add team headers
                 let teams = this.matchData.teams.red;
@@ -98,43 +130,31 @@ class OverwatchRankings {
         return rankings;
     }
 
-    validateAllRankings() {
-        for (const categoryId of this.categories) {
-            const radios = document.querySelectorAll(`input[data-category="${categoryId}"]`);
-            const selectedRanks = new Set();
-            let count = 0; //check if 3 ranks are selected
-            radios.forEach(radio => {
-                if (radio.checked) {
-                    count++;
-                    selectedRanks.add(radio.dataset.rank);
-                }
-            });
-            if(count != 6) return false;
-        }
-        return true;
+    collectNotes() {
+        const notes = {};
+        [...this.matchData.teams.red, ...this.matchData.teams.blue].forEach((teamNumber, index) => {
+            const teamNotes = document.querySelectorAll(`input[data-notes="${teamNumber}"]`);
+            notes[teamNumber] = teamNotes[0].value;
+        })
+        return notes;
     }
 
     handleSubmit(e) {
         e.preventDefault();
 
-        if (!this.validateAllRankings()) {
-            alert('Please ensure all teams are ranked uniquely (1-3) in each category');
-            return;
-        }
-
-        const matchRankings = {
+        const scoutingData = {
             matchNumber: this.matchData.matchNumber,
             matchType: this.matchData.matchType,
             timestamp: new Date().toISOString(),
             rankings: this.collectRankings(),
-            notes: document.getElementById('notes').value
+            notes: this.collectNotes(),
         };
 
         // Save to local storage
         sessionStorage.removeItem('matchData');
 
         // Convert JSON object to a string
-        const jsonString = JSON.stringify(matchRankings, null, 2);
+        const jsonString = JSON.stringify(scoutingData, null, 2);
 
         // Create a Blob containing the JSON data
         const blob = new Blob([jsonString], { type: "application/json" });
