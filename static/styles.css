@@ -103,6 +103,14 @@ body {
     margin: 2rem 0;
 }
 
+.team-notes {
+    display: grid;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
 .alliance-teams {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -140,6 +148,13 @@ h3 {
 }
 
 .category {
+    background-color: var(--background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.notes {
     background-color: var(--background);
     padding: 1.5rem;
     border-radius: 8px;
@@ -218,15 +233,15 @@ textarea:focus {
     .alliance-teams {
         grid-template-columns: 1fr;
     }
-    
+
     .ranking-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .button-group {
         flex-direction: column;
     }
-    
+
     .btn {
         width: 100%;
     }
