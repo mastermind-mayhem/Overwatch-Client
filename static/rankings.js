@@ -143,6 +143,7 @@ class OverwatchRankings {
         e.preventDefault();
 
         const scoutingData = {
+            firstEventCode: this.eventData.event.first_event_code,
             matchNumber: this.matchData.matchNumber,
             matchType: this.matchData.matchType,
             timestamp: new Date().toISOString(),
@@ -168,7 +169,8 @@ class OverwatchRankings {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        // window.location.href = '/';
+
+        window.location.href = '/matchSet';
     }
 }
 

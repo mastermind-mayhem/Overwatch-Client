@@ -64,7 +64,7 @@ function combineJsonData(selectedFiles) {
 // Sort file table alphabetically
 function sortFileTable() {
     const rows = Array.from(fileTableBody.querySelectorAll('tr'));
-    
+
     rows.sort((a, b) => {
         const nameA = a.querySelector('td:first-child').textContent;
         const nameB = b.querySelector('td:first-child').textContent;
@@ -79,7 +79,7 @@ function sortFileTable() {
 // Add file to table
 function addFileToTable(file, parsedJson) {
     const { type, itemCount } = analyzeJsonContent(parsedJson);
-    
+
     const row = document.createElement('tr');
     row.innerHTML = `
         <td>${file.name}</td>
@@ -88,7 +88,7 @@ function addFileToTable(file, parsedJson) {
             <button class="remove-file" data-filename="${file.name}">Remove</button>
         </td>
     `;
-    
+
     fileTableBody.appendChild(row);
     fileTable.style.display = 'table';
     processButton.disabled = false;
@@ -111,7 +111,7 @@ fileInput.addEventListener('change', function(event) {
         }
 
         const reader = new FileReader();
-        
+
         reader.onload = function(e) {
             try {
                 const parsedJson = JSON.parse(e.target.result);
@@ -119,14 +119,14 @@ fileInput.addEventListener('change', function(event) {
                     file: file,
                     data: parsedJson
                 });
-                
+
                 // Add file to table
                 addFileToTable(file, parsedJson);
             } catch (error) {
                 errorMessageElement.textContent += `Error parsing ${file.name}: Invalid JSON\n`;
             }
         };
-        
+
         reader.readAsText(file);
     });
 });
@@ -159,7 +159,7 @@ fileTable.addEventListener('click', function(event) {
 
     const sortKey = th.dataset.sort;
     const rows = Array.from(fileTableBody.querySelectorAll('tr'));
-    
+
     const sortMultiplier = th.dataset.sortDirection === 'asc' ? -1 : 1;
     th.dataset.sortDirection = sortMultiplier === 1 ? 'asc' : 'desc';
 
@@ -183,7 +183,7 @@ fileTable.addEventListener('click', function(event) {
 processButton.addEventListener('click', function() {
     // Get selected files
     const selectedCheckboxes = document.querySelectorAll('.file-checkbox:checked');
-    
+
     if (selectedCheckboxes.length === 0) {
         errorMessageElement.textContent = 'Please select files to process.';
         return;
@@ -192,9 +192,9 @@ processButton.addEventListener('click', function() {
     const selectedFiles = Array.from(selectedCheckboxes).map(
         checkbox => jsonFiles.get(checkbox.dataset.filename)
     );
-    
+
     let result = JSON.stringify(combineJsonData(selectedFiles), null, 2);
 
     sessionStorage.setItem('forAnalysis', result);
-    window.location.href = '/analysis'; 
+    window.location.href = '/analysis';
 });
