@@ -6,7 +6,7 @@ let teamData = {};
 Object.values(matchData).forEach(match => {
     Object.entries(match.rankings).forEach(([team, scores]) => {
         if (!teamData[team]) {
-            teamData[team] = { auto: 0, coral: 0, algae: 0, driver: 0, end: 0, matches: 0 };
+            teamData[team] = { auto: 0, coral: 0, algae: 0, driver: 0, end: 0, matches: 0, notes: [] };
         }
 
         Object.keys(scores).forEach(category => {
@@ -14,6 +14,16 @@ Object.values(matchData).forEach(match => {
         });
 
         teamData[team].matches += 1;
+    });
+
+    Object.entries(match.notes).forEach(([team, note]) => {
+        // if notes is not an empty string
+        if (!note.trim()) return;
+        if (!teamData[team]) {
+            teamData[team] = { auto: 0, coral: 0, algae: 0, driver: 0, end: 0, matches: 0, notes: [] };
+        }
+        console.log(match);
+        teamData[team].notes.push('(' + match.matchType[0] + match.matchNumber + ') ' + note.trim());
     });
 });
 
@@ -27,7 +37,8 @@ let averageRankings = Object.entries(teamData).map(([team, data]) => {
         algae: (data.algae / data.matches).toFixed(2),
         driver: (data.driver / data.matches).toFixed(2),
         end: (data.end / data.matches).toFixed(2),
-        overall: overall.toFixed(2)  // Overall score
+        overall: overall.toFixed(2),
+        notes: data.notes.join('; '),
     };
 });
 
@@ -42,6 +53,7 @@ function interpolateColor(value) {
         return `rgba(${green[0]}, ${green[1]}, ${green[2]}, ${opacity})`;
     } else {
         let opacity = (3-value);
+        opacity = 1 - opacity;
         if (opacity < 0.3) {
             opacity = 0.3;
         }
@@ -65,6 +77,7 @@ function updateTable() {
             <td style="background-color: ${interpolateColor(team.driver)}">${team.driver}</td>
             <td style="background-color: ${interpolateColor(team.end)}">${team.end}</td>
             <td style="background-color: ${interpolateColor(team.overall)}">${team.overall}</td>
+            <td>${team.notes}</td>
         </tr>`;
         tableBody.innerHTML += row;
     });
