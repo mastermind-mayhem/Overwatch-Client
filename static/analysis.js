@@ -67,9 +67,11 @@ function updateTable() {
 
     let tableBody = document.querySelector("#rankingsTable tbody");
     tableBody.innerHTML = "";
-
+    let number = 0;
     sortedData.forEach(team => {
+        number += 1;
         let row = `<tr>
+            <td>${number}</td>
             <td>${team.team}</td>
             <td style="background-color: ${interpolateColor(team.auto)}">${team.auto}</td>
             <td style="background-color: ${interpolateColor(team.coral)}">${team.coral}</td>
@@ -89,3 +91,43 @@ function sortTable(category) {
 }
 
 updateTable(); // Initial table population
+  
+function exportTableToPDF() {
+    const table = document.getElementById("rankingsTable");
+
+    // Temporarily apply styles to make the table more condensed
+    const originalStyles = table.getAttribute('style') || '';
+    table.setAttribute('style', `${originalStyles}; border-collapse: collapse; padding: 1px;`);
+
+    // Capture the table with html2canvas
+    html2canvas(table, {
+        scale: 2, // Increase the scale to make the image high definition
+        onrendered: function(canvas) {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'pt', 'a4');
+            const pageWidth = pdf.internal.pageSize.width;
+            const pageHeight = pdf.internal.pageSize.height;
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // Calculate the aspect ratio
+            const ratio = Math.min(pageWidth / imgWidth, (pageHeight - 20) / imgHeight); // Make room for label
+            const newWidth = (imgWidth * ratio)+40;
+            const newHeight = (imgHeight * ratio)-20; // Make room for label
+
+            // Calculate the position to center the image
+            const x = (pageWidth - newWidth) / 2;
+            const y = 30; // Start below the label
+
+            // Add label in the top left corner
+            pdf.text(document.getElementById("sortCategory").value, 10, 20);
+
+            // Add the image of the table
+            pdf.addImage(imgData, 'PNG', x, y, newWidth, newHeight);
+            pdf.save(document.getElementById("sortCategory").value+'.pdf');
+
+            // Restore the original styles
+            table.setAttribute('style', originalStyles);
+        }
+    });
+}

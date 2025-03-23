@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
+from flask import Flask
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder="preload")
+CORS(app)
 
 @app.route('/')
 def index():
