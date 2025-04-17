@@ -5,9 +5,9 @@
     --royal-blue-dark: #14253d;
     --accent-color: #e63946;
     --text-light: #f1faee;
-    --background: #f5f8fa;
+    --background: #cacaca;
     --card-background: #ffffff;
-    --border-color: #e1e8ed;
+    --border-color: #c5c5c5;
     --blue-alliance: rgba(0, 170, 255, 0.2);
     --red-alliance: rgba(254, 0, 21, 0.2);
 }
@@ -145,6 +145,15 @@ h3 {
     display: grid;
     gap: 2rem;
     margin: 2rem 0;
+    
+}
+
+.ranking-categories.category {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    justify-content: center;
 }
 
 .category {
@@ -152,10 +161,13 @@ h3 {
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
+    text-align: center;
+    justify-content: center;
 }
 
+
 .notes {
-    background-color: var(--background);
+    background-color: var(--card-background);
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);

@@ -14,10 +14,6 @@ def index():
 def rankings():
     return render_template('rankings.html')
 
-@app.route('/matchSet')
-def setup():
-    return render_template('matchSet.html')
-
 @app.route('/teamUpload')
 def teamUpload():
     return render_template('teamUpload.html')
@@ -30,9 +26,6 @@ def analysis():
 def send_static(path):
     return send_from_directory('static', path)
 
-@app.route('/preload/<path:filename>')
-def serve_preload(filename):
-    return send_from_directory('preload', filename)
 
 
 if __name__ == '__main__':

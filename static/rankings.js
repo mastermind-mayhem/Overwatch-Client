@@ -4,7 +4,6 @@ class OverwatchRankings {
         this.form = document.getElementById('rankingForm');
         this.categories = ['autoRankings', 'coralRankings', 'algaeRankings', 'driverRankings', 'endRankings'];
         this.matchData = JSON.parse(sessionStorage.getItem('matchData') || '{}');
-        this.eventData = JSON.parse(sessionStorage.getItem('eventData') || '{}');
 
         if (!this.matchData.teams) {
             window.location.href = '/';
@@ -89,7 +88,7 @@ class OverwatchRankings {
                 [1, 2, 3].forEach(rank => {
                     const row = table.insertRow();
                     const rankCell = row.insertCell();
-                    rankCell.textContent = `${rank}st`;
+                    rankCell.textContent = `${rank}`;
 
 
                     [...teams].forEach((teamNumber, index) => {
@@ -143,7 +142,6 @@ class OverwatchRankings {
         e.preventDefault();
 
         const scoutingData = {
-            firstEventCode: this.eventData.event.first_event_code,
             matchNumber: this.matchData.matchNumber,
             matchType: this.matchData.matchType,
             timestamp: new Date().toISOString(),
@@ -163,7 +161,9 @@ class OverwatchRankings {
         // Create a temporary link element
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = this.eventData.event.first_event_code + "_match" + this.matchData.matchNumber + ".json";  // Filename
+        const now = new Date();
+        var date = now.toISOString().split('T')[0]
+        a.download = date + "_match" + this.matchData.matchNumber + ".json";  // Filename
 
         // Append to the DOM, trigger download, and remove the element
         document.body.appendChild(a);
